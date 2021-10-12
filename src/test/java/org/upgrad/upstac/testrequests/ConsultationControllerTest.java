@@ -69,7 +69,7 @@ class ConsultationControllerTest {
 
     assertThat(testRequest.requestId, equalTo(resultTestRequest.requestId));
     assertThat(resultTestRequest.getStatus(), equalTo(RequestStatus.COMPLETED));
-    assertThat(testRequest.getConsultation().getSuggestion(),equalTo(resultTestRequest.getConsultation().getSuggestion()));
+    assertThat(consultationRequest.getSuggestion(),equalTo(resultTestRequest.getConsultation().getSuggestion()));
   }
 
   @Test

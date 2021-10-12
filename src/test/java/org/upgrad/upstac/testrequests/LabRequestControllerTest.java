@@ -68,7 +68,7 @@ class LabRequestControllerTest {
         TestRequest resultTestResult = labRequestController.updateLabTest(testRequest.requestId, createLabResult);
         assertThat(testRequest.requestId, equalTo(resultTestResult.requestId));
         assertThat(resultTestResult.getStatus(), equalTo(RequestStatus.LAB_TEST_COMPLETED));
-        assertThat(testRequest.getLabResult().getResult(), equalTo(resultTestResult.getLabResult().getResult()));
+        assertThat(createLabResult.getResult(), equalTo(resultTestResult.getLabResult().getResult()));
 
     }
 
