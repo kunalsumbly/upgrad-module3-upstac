@@ -14,25 +14,21 @@ import java.util.List;
 @Validated
 public class TestRequestFlowService {
 
-    @Autowired
-    private TestRequestFlowRepository testRequestFlowRepository;
+  @Autowired
+  private TestRequestFlowRepository testRequestFlowRepository;
 
+  @Transactional
+  public void log(TestRequest testRequest, RequestStatus from, RequestStatus to, User changedBy) {
+    TestRequestFlow testRequestFlow = new TestRequestFlow();
+    testRequestFlow.setChangedBy(changedBy);
+    testRequestFlow.setRequest(testRequest);
+    testRequestFlow.setFromStatus(from);
+    testRequestFlow.setToStatus(to);
+    testRequestFlowRepository.save(testRequestFlow);
+  }
 
-    @Transactional
-    public void log(TestRequest testRequest, RequestStatus from, RequestStatus to, User changedBy) {
-        TestRequestFlow testRequestFlow = new TestRequestFlow();
-        testRequestFlow.setChangedBy(changedBy);
-        testRequestFlow.setRequest(testRequest);
-        testRequestFlow.setFromStatus(from);
-        testRequestFlow.setToStatus(to);
-        testRequestFlowRepository.save(testRequestFlow);
-    }
+  public List<TestRequestFlow> findByRequest(TestRequest testRequest) {
 
-
-
-    public List<TestRequestFlow> findByRequest(TestRequest testRequest) {
-
-        return testRequestFlowRepository.findByRequest(testRequest);
-    }
-
+    return testRequestFlowRepository.findByRequest(testRequest);
+  }
 }

@@ -28,13 +28,17 @@ public class ConsultationController {
 
   Logger log = LoggerFactory.getLogger(ConsultationController.class);
 
-  @Autowired private TestRequestUpdateService testRequestUpdateService;
+  @Autowired
+  private TestRequestUpdateService testRequestUpdateService;
 
-  @Autowired private TestRequestQueryService testRequestQueryService;
+  @Autowired
+  private TestRequestQueryService testRequestQueryService;
 
-  @Autowired TestRequestFlowService testRequestFlowService;
+  @Autowired
+  TestRequestFlowService testRequestFlowService;
 
-  @Autowired private UserLoggedInService userLoggedInService;
+  @Autowired
+  private UserLoggedInService userLoggedInService;
 
   @GetMapping("/in-queue")
   @PreAuthorize("hasAnyRole('DOCTOR')")
@@ -52,7 +56,6 @@ public class ConsultationController {
     try {
       User doctor = userLoggedInService.getLoggedInUser();
       return testRequestQueryService.findByDoctor(doctor);
-
     } catch (Exception ex) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
     }

@@ -57,14 +57,6 @@ public class User {
 
     private Integer pinCode;
 
-    //CascadeType.PERSIST has issues with many to many which makes us not use CascadeType.ALL
-    //So Using  other Cascades other than CascadeType.PERSIST
-//    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE,CascadeType.REFRESH,CascadeType.DETACH})
-//    @JoinTable(name = "USER_ROLES", joinColumns = {
-//            @JoinColumn(name = "USER_ID") }, inverseJoinColumns = {
-//            @JoinColumn(name = "ROLE_ID") })
-//    private Set<Role> roles;
-
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 

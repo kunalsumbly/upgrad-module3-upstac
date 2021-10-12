@@ -13,56 +13,51 @@ import java.util.List;
 @Service
 public class TestRequestService {
 
-    @Autowired
-    private TestRequestRepository testRequestRepository;
+  @Autowired
+  private TestRequestRepository testRequestRepository;
 
+  private static Logger logger = LoggerFactory.getLogger(TestRequestService.class);
 
+  public TestRequest createTestRequestFrom(User user, CreateTestRequest createTestRequest) {
 
-    private static Logger logger = LoggerFactory.getLogger(TestRequestService.class);
+    validateExistingRequestsNotPresentWithSameDetails(createTestRequest);
 
+    TestRequest testRequest = new TestRequest();
 
+    testRequest.setName(createTestRequest.getName());
+    testRequest.setCreated(LocalDate.now());
+    testRequest.setStatus(RequestStatus.INITIATED);
+    testRequest.setAge(createTestRequest.getAge());
+    testRequest.setEmail(createTestRequest.getEmail());
+    testRequest.setPhoneNumber(createTestRequest.getPhoneNumber());
+    testRequest.setPinCode(createTestRequest.getPinCode());
+    testRequest.setAddress(createTestRequest.getAddress());
+    testRequest.setGender(createTestRequest.getGender());
 
-    public TestRequest createTestRequestFrom(User user,CreateTestRequest createTestRequest) {
+    testRequest.setCreatedBy(user);
+    return testRequestRepository.save(testRequest);
+  }
 
-        validateExistingRequestsNotPresentWithSameDetails(createTestRequest);
+  public void validateExistingRequestsNotPresentWithSameDetails(
+      CreateTestRequest createTestRequest) {
+    List<TestRequest> testRequests =
+        testRequestRepository.findByEmailOrPhoneNumber(
+            createTestRequest.getEmail(), createTestRequest.getPhoneNumber());
 
-        TestRequest testRequest = new TestRequest();
+    for (TestRequest testRequest : testRequests) {
 
-        testRequest.setName(createTestRequest.getName());
-        testRequest.setCreated(LocalDate.now());
-        testRequest.setStatus(RequestStatus.INITIATED);
-        testRequest.setAge(createTestRequest.getAge());
-        testRequest.setEmail(createTestRequest.getEmail());
-        testRequest.setPhoneNumber(createTestRequest.getPhoneNumber());
-        testRequest.setPinCode(createTestRequest.getPinCode());
-        testRequest.setAddress(createTestRequest.getAddress());
-        testRequest.setGender(createTestRequest.getGender());
-
-        testRequest.setCreatedBy(user);
-        return testRequestRepository.save(testRequest);
+      if (testRequest.getStatus().equals(RequestStatus.COMPLETED) == false)
+        throw new AppException("A Request with same PhoneNumber or Email is already in progress ");
     }
+  }
 
-    public void validateExistingRequestsNotPresentWithSameDetails(CreateTestRequest createTestRequest) {
-        List<TestRequest> testRequests = testRequestRepository.findByEmailOrPhoneNumber(createTestRequest.getEmail(), createTestRequest.getPhoneNumber());
+  public List<TestRequest> findByStatus(RequestStatus requestStatus) {
 
+    return testRequestRepository.findByStatus(requestStatus);
+  }
 
-        for (TestRequest testRequest : testRequests) {
+  public List<TestRequest> getHistoryFor(User loggedInUser) {
 
-            if (testRequest.getStatus().equals(RequestStatus.COMPLETED) == false)
-                throw new AppException("A Request with same PhoneNumber or Email is already in progress ");
-        }
-
-    }
-
-    public List<TestRequest> findByStatus(RequestStatus requestStatus){
-
-        return testRequestRepository.findByStatus(requestStatus);
-    }
-
-    public List<TestRequest> getHistoryFor(User loggedInUser){
-
-        return testRequestRepository.findByCreatedBy(loggedInUser);
-    }
-
-
+    return testRequestRepository.findByCreatedBy(loggedInUser);
+  }
 }
