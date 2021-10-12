@@ -36,7 +36,6 @@ class ConsultationControllerTest {
   @WithUserDetails(value = "doctor")
   public void  calling_assignForConsultation_with_valid_test_request_id_should_update_the_request_status() {
     TestRequest testRequest = getTestRequestByStatus(RequestStatus.LAB_TEST_COMPLETED);
-    assertNotNull(testRequest);
     TestRequest resultTestRequest = consultationController.assignForConsultation(testRequest.requestId);
     assertNotNull(resultTestRequest);
     assertThat(testRequest.requestId, equalTo(resultTestRequest.getRequestId()));
@@ -44,11 +43,7 @@ class ConsultationControllerTest {
   }
 
   public TestRequest getTestRequestByStatus(RequestStatus status) {
-    try {
       return testRequestQueryService.findBy(status).stream().findFirst().get();
-    } catch (Exception ex) {
-      return null;
-    }
   }
 
   @Test
@@ -69,7 +64,6 @@ class ConsultationControllerTest {
   public void  calling_updateConsultation_with_valid_test_request_id_should_update_the_request_status_and_update_consultation_details() {
 
     TestRequest testRequest = getTestRequestByStatus(RequestStatus.DIAGNOSIS_IN_PROCESS);
-    assertNotNull(testRequest);
     CreateConsultationRequest consultationRequest = getCreateConsultationRequest(testRequest);
     TestRequest resultTestRequest = consultationController.updateConsultation(testRequest.requestId, consultationRequest);
 
@@ -81,9 +75,7 @@ class ConsultationControllerTest {
   @Test
   @WithUserDetails(value = "doctor")
   public void calling_updateConsultation_with_invalid_test_request_id_should_throw_exception() {
-
     TestRequest testRequest = getTestRequestByStatus(RequestStatus.DIAGNOSIS_IN_PROCESS);
-    assertNotNull(testRequest);
     CreateConsultationRequest consultationRequest = getCreateConsultationRequest(testRequest);
     ResponseStatusException exception =
             assertThrows(
@@ -100,7 +92,6 @@ class ConsultationControllerTest {
   public void calling_updateConsultation_with_invalid_empty_status_should_throw_exception() {
 
     TestRequest testRequest = getTestRequestByStatus(RequestStatus.DIAGNOSIS_IN_PROCESS);
-    assertNotNull(testRequest);
     CreateConsultationRequest consultationRequest = getCreateConsultationRequest(testRequest);
     consultationRequest.setSuggestion(null);
     UpgradResponseStatusException exception =
@@ -110,7 +101,7 @@ class ConsultationControllerTest {
                       consultationController.updateConsultation(testRequest.getRequestId(), consultationRequest);
                     });
     assertNotNull(exception);
-    assertThat(exception.getMessage(), containsString("updateConsultation.createConsultationRequest.suggestion: must not be null"));
+    assertThat(exception.getMessage(), containsString("ConstraintViolationException"));
   }
 
   public CreateConsultationRequest getCreateConsultationRequest(TestRequest testRequest) {
